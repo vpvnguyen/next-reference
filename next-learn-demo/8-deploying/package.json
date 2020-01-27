@@ -4,10 +4,11 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "next start"
+    "start": "next start -p %PORT%"
   },
   "license": "ISC",
   "dependencies": {
+    "cross-env": "^7.0.0",
     "next": "latest",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
