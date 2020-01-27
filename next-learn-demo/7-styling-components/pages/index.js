@@ -1,31 +1,91 @@
-import Layout from '../components/MyLayout.js'
+import Layout from '../components/MyLayout'
 import Link from 'next/link'
-import fetch from 'isomorphic-unfetch'
 
-const Index = props => (
-  <Layout>
-    <h1>Batman TV Shows</h1>
-    <ul>
-      {props.shows.map(show => (
-        <li key={show.id}>
-          <Link href="/p/[id]" as={`/p/${show.id}`}>
-            <a>{show.name}</a>
-          </Link>
-        </li>
-      ))}
-    </ul>
-  </Layout>
+function getPosts() {
+  return [
+    { id: 'hello-nextjs', title: 'Hello Next.js' },
+    { id: 'learn-nextjs', title: 'Learn Next.js is awesome' },
+    { id: 'deploy-nextjs', title: 'Deploy apps with ZEIT' }
+  ]
+};
+
+// CSS rules have no effect on elements inside of a child component; like the one below
+const PostLink = ({ post }) => (
+  <li>
+    <Link href="/p/[id]" as={`/p/${post.id}`}>
+      <a>{post.title}</a>
+    </Link>
+
+    {/* this styling is encapsulated in this component */}
+    <style jsx>{`
+      li {
+        list-style: none;
+        margin: 5px 0;
+      }
+
+      a {
+        text-decoration: none;
+        color: blue;
+        font-family: 'Arial';
+      }
+
+      a:hover {
+        opacity: 0.6;
+      }
+    `}</style>
+  </li>
 )
 
-Index.getInitialProps = async function() {
-  const res = await fetch('https://api.tvmaze.com/search/shows?q=batman')
-  const data = await res.json()
+export default function Blog() {
+  return (
+    <Layout>
+      <h1>My Blog</h1>
+      <ul>
 
-  console.log(`Show data fetched. Count: ${data.length}`)
+        {/* abstracting getPosts to PostLink component above; this will show the scope of styling. expected that we no longer have styling for the elements inside PostLink */}
 
-  return {
-    shows: data.map(entry => entry.show)
-  }
+        {/* {getPosts().map(post => (
+          <li key={post.id}>
+            <Link href="/p/[id]" as={`/p/${post.id}`}>
+              <a>{post.title}</a>
+            </Link>
+          </li>
+        ))} */}
+
+
+        {/* INTO THIS */}
+
+        {getPosts().map(post => (
+          <PostLink key={post.id} post={post} />
+        ))}
+      </ul>
+
+      {/* note that styling is wrapped in in a template string */}
+      {/* Styles should go inside template strings. Styled jsx works as a babel plugin. It will parse all of the CSS and apply it in the build process. (With that our styles get applied without any overhead time) */}
+      <style jsx>{`
+        h1,
+        a {
+          font-family: 'Arial';
+        }
+
+        ul {
+          padding: 0;
+        }
+
+        li {
+          list-style: none;
+          margin: 5px 0;
+        }
+
+        a {
+          text-decoration: none;
+          color: blue;
+        }
+
+        a:hover {
+          opacity: 0.6;
+        }
+      `}</style>
+    </Layout>
+  )
 }
-
-export default Index
