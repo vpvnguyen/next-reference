@@ -8,6 +8,8 @@ const Home: NextPage<{ userAgent: string }> = ({ userAgent }) => (
 
 Home.getInitialProps = async ({ req }) => {
     const userAgent = req ? req.headers['user-agent'] || '' : navigator.userAgent;
+    console.log(req);
+
     return { userAgent };
 };
 
